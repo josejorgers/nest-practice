@@ -1,0 +1,18 @@
+<mat-toolbar color="primary">
+  <span>Candidate Management</span>
+</mat-toolbar>
+
+<main class="container">
+  <mat-card class="form-card">
+    <app-candidate-form (candidateAdded)="onCandidateAdded()"></app-candidate-form>
+  </mat-card>
+
+  <mat-card class="list-card">
+    <mat-card-header>
+      <mat-card-title>Candidates</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <app-candidate-list></app-candidate-list>
+    </mat-card-content>
+  </mat-card>
+</main>
