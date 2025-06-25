@@ -1,0 +1,9 @@
+{
+  "id": 3,
+  "name": "Test",
+  "surname": "Candidate",
+  "seniority": "mid",
+  "yearsOfExperience": 3,
+  "availability": true,
+  "createdAt": "2023-06-25T00:00:00.000Z"
+}

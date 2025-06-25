@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "John",
+    "surname": "Doe",
+    "seniority": "senior",
+    "yearsOfExperience": 5,
+    "availability": true,
+    "createdAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "name": "Jane",
+    "surname": "Smith",
+    "seniority": "junior",
+    "yearsOfExperience": 2,
+    "availability": false,
+    "createdAt": "2023-01-02T00:00:00.000Z"
+  }
+]
