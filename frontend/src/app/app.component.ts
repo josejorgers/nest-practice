@@ -1,14 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { CandidateFormComponent } from './components/candidate-form/candidate-form.component';
-import { CandidateListComponent } from './components/candidate-list/candidate-list.component';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatCardModule } from "@angular/material/card";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { CandidateFormComponent } from "./components/candidate-form/candidate-form.component";
+import { CandidateListComponent } from "./components/candidate-list/candidate-list.component";
 
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   standalone: true,
   imports: [
     CommonModule,
@@ -17,17 +17,18 @@ import { CandidateListComponent } from './components/candidate-list/candidate-li
     MatButtonModule,
     MatIconModule,
     CandidateFormComponent,
-    CandidateListComponent
+    CandidateListComponent,
   ],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit {
   @ViewChild(CandidateListComponent) candidateList!: CandidateListComponent;
 
-  constructor() {}
-
-  ngOnInit(): void {}
+  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
+  ngOnInit(): void {
+    // Empty
+  }
 
   onCandidateAdded(): void {
     if (this.candidateList) {

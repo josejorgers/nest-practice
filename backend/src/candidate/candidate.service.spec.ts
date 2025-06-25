@@ -5,11 +5,13 @@ import { CandidateService } from './candidate.service';
 import { Candidate, SeniorityLevel } from './candidate.entity';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 
-const mockFile = {
-  buffer: Buffer.from('test'),
-  originalname: 'test.xlsx',
-  mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-} as Express.Multer.File;
+type SheetToJSON = (worksheet: any) => any;
+type XLSX = {
+  read: any;
+  utils: {
+    sheet_to_json: SheetToJSON;
+  };
+};
 
 describe('CandidateService', () => {
   let service: CandidateService;
@@ -43,7 +45,9 @@ describe('CandidateService', () => {
     }).compile();
 
     service = module.get<CandidateService>(CandidateService);
-    repository = module.get<Repository<Candidate>>(getRepositoryToken(Candidate));
+    repository = module.get<Repository<Candidate>>(
+      getRepositoryToken(Candidate),
+    );
   });
 
   afterEach(() => {
@@ -68,8 +72,9 @@ describe('CandidateService', () => {
       mockRepository.save.mockResolvedValue(mockCandidate);
 
       const result = await service.create(createDto);
-
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(repository.create).toHaveBeenCalledWith(createDto);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(repository.save).toHaveBeenCalledWith(mockCandidate);
       expect(result).toEqual(mockCandidate);
     });
@@ -82,6 +87,7 @@ describe('CandidateService', () => {
 
       const result = await service.findAll();
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(repository.find).toHaveBeenCalledWith({
         order: { createdAt: 'DESC' },
       });
@@ -92,26 +98,27 @@ describe('CandidateService', () => {
   describe('processExcel', () => {
     let xlsxMock: any;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       // Mock xlsx module
       xlsxMock = {
         read: jest.fn().mockReturnValue({
           SheetNames: ['Sheet1'],
           Sheets: {
-            Sheet1: {}
-          }
+            Sheet1: {},
+          },
         }),
         utils: {
-          sheet_to_json: jest.fn()
-        }
+          sheet_to_json: jest.fn(),
+        },
       };
-      
+
       // Mock the xlsx import
-      jest.mock('xlsx', () => xlsxMock);
-      
+      jest.mock('xlsx', (): XLSX => xlsxMock as XLSX);
+
       // Clear the require cache to ensure we get a fresh instance with our mock
       jest.resetModules();
-      const { CandidateService } = require('./candidate.service');
+      // Import using ES6 import() for dynamic imports
+      const { CandidateService } = await import('./candidate.service');
       service = new CandidateService(repository);
     });
 
@@ -121,27 +128,33 @@ describe('CandidateService', () => {
 
     it('should process excel file and create candidate', async () => {
       // Setup mock data
-      const mockExcelData = [{
-        seniority: 'senior',
-        'years of experience': 5,
-        availability: 'TRUE'
-      }];
-      
+      const mockExcelData = [
+        {
+          seniority: 'senior',
+          'years of experience': 5,
+          availability: 'TRUE',
+        },
+      ];
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       xlsxMock.utils.sheet_to_json.mockReturnValue(mockExcelData);
-      
+
       const mockExcelBuffer = Buffer.from('test');
       const mockExcelFile = { buffer: mockExcelBuffer } as Express.Multer.File;
-      
+
       mockRepository.create.mockReturnValue(mockCandidate);
       mockRepository.save.mockResolvedValue(mockCandidate);
 
       const result = await service.processExcel(mockExcelFile, 'John', 'Doe');
 
       // Verify xlsx was called correctly
-      expect(xlsxMock.read).toHaveBeenCalledWith(mockExcelBuffer, { type: 'buffer' });
-      expect(xlsxMock.utils.sheet_to_json).toHaveBeenCalled();
-      
-      // Verify repository was called with correct data
+      expect((xlsxMock as XLSX).read).toHaveBeenCalledWith(mockExcelBuffer, {
+        type: 'buffer',
+      });
+      expect((xlsxMock as XLSX).utils.sheet_to_json).toHaveBeenCalled();
+
+      // Verify repository was called
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(repository.create).toHaveBeenCalledWith({
         name: 'John',
         surname: 'Doe',

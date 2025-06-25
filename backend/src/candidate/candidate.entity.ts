@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 export enum SeniorityLevel {
   JUNIOR = 'junior',
-  SENIOR = 'senior'
+  SENIOR = 'senior',
 }
 
 @Entity('candidates')
@@ -20,7 +20,7 @@ export class Candidate {
     type: 'varchar',
     length: 10,
     default: SeniorityLevel.JUNIOR,
-    enum: Object.values(SeniorityLevel)
+    enum: Object.values(SeniorityLevel),
   })
   seniority: SeniorityLevel;
 

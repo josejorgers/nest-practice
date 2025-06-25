@@ -1,9 +1,18 @@
-import { Controller, Get, Post, Body, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiBody, ApiTags } from '@nestjs/swagger';
 import { CandidateService } from './candidate.service';
 import { Candidate } from './candidate.entity';
-import { CreateCandidateDto } from './dto/create-candidate.dto';
 
 @ApiTags('candidates')
 @Controller('candidates')
@@ -37,10 +46,14 @@ export class CandidateController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 1024 * 10 }), // 10KB
-          new FileTypeValidator({ fileType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }),
+          new FileTypeValidator({
+            fileType:
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          }),
         ],
       }),
-    ) file: Express.Multer.File,
+    )
+    file: Express.Multer.File,
     @Body('name') name: string,
     @Body('surname') surname: string,
   ): Promise<Candidate> {

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CandidateController } from './candidate.controller';
 import { CandidateService } from './candidate.service';
-import { Candidate } from './candidate.entity';
+import { Candidate, SeniorityLevel } from './candidate.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -13,7 +13,7 @@ describe('CandidateController', () => {
     id: 1,
     name: 'John',
     surname: 'Doe',
-    seniority: 'senior' as any, // Type assertion to avoid type error in test
+    seniority: SeniorityLevel.SENIOR,
     yearsOfExperience: 5,
     availability: true,
     createdAt: new Date(),
@@ -22,7 +22,8 @@ describe('CandidateController', () => {
   const mockFile = {
     buffer: Buffer.from('test'),
     originalname: 'test.xlsx',
-    mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    mimetype:
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   } as Express.Multer.File;
 
   beforeEach(async () => {
@@ -48,10 +49,12 @@ describe('CandidateController', () => {
   describe('findAll', () => {
     it('should return an array of candidates', async () => {
       const result = [mockCandidate];
-      jest.spyOn(service, 'findAll').mockResolvedValue(result);
+      const findAllSpy = jest
+        .spyOn(service, 'findAll')
+        .mockResolvedValue(result);
 
       expect(await controller.findAll()).toBe(result);
-      expect(service.findAll).toHaveBeenCalled();
+      expect(findAllSpy).toHaveBeenCalled();
     });
   });
 
@@ -59,12 +62,14 @@ describe('CandidateController', () => {
     it('should process and upload file', async () => {
       const name = 'John';
       const surname = 'Doe';
-      
-      jest.spyOn(service, 'processExcel').mockResolvedValue(mockCandidate);
+
+      const processExcelSpy = jest
+        .spyOn(service, 'processExcel')
+        .mockResolvedValue(mockCandidate);
 
       const result = await controller.uploadFile(mockFile, name, surname);
 
-      expect(service.processExcel).toHaveBeenCalledWith(mockFile, name, surname);
+      expect(processExcelSpy).toHaveBeenCalledWith(mockFile, name, surname);
       expect(result).toEqual(mockCandidate);
     });
 
@@ -75,7 +80,7 @@ describe('CandidateController', () => {
       } as Express.Multer.File;
 
       await expect(
-        controller.uploadFile(invalidFile, 'John', 'Doe')
+        controller.uploadFile(invalidFile, 'John', 'Doe'),
       ).rejects.toThrow();
     });
   });

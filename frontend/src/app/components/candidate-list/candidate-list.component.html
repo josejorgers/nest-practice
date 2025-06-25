@@ -1,10 +1,15 @@
 <div class="table-container">
   <div class="header-actions">
-    <button mat-icon-button (click)="loadCandidates()" [disabled]="isLoading" matTooltip="Refresh list">
+    <button
+      mat-icon-button
+      (click)="loadCandidates()"
+      [disabled]="isLoading"
+      matTooltip="Refresh list"
+    >
       <mat-icon>refresh</mat-icon>
     </button>
   </div>
-  
+
   <div class="loading-shade" *ngIf="isLoading">
     <mat-spinner></mat-spinner>
   </div>
@@ -13,13 +18,13 @@
     <!-- Name Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let candidate">{{candidate.name}}</td>
+      <td mat-cell *matCellDef="let candidate">{{ candidate.name }}</td>
     </ng-container>
 
     <!-- Surname Column -->
     <ng-container matColumnDef="surname">
       <th mat-header-cell *matHeaderCellDef>Surname</th>
-      <td mat-cell *matCellDef="let candidate">{{candidate.surname}}</td>
+      <td mat-cell *matCellDef="let candidate">{{ candidate.surname }}</td>
     </ng-container>
 
     <!-- Seniority Column -->
@@ -27,7 +32,7 @@
       <th mat-header-cell *matHeaderCellDef>Seniority</th>
       <td mat-cell *matCellDef="let candidate">
         <span class="badge" [ngClass]="candidate.seniority">
-          {{candidate.seniority | titlecase}}
+          {{ candidate.seniority | titlecase }}
         </span>
       </td>
     </ng-container>
@@ -35,22 +40,29 @@
     <!-- Years of Experience Column -->
     <ng-container matColumnDef="yearsOfExperience">
       <th mat-header-cell *matHeaderCellDef>Years of Experience</th>
-      <td mat-cell *matCellDef="let candidate">{{candidate.yearsOfExperience}}</td>
+      <td mat-cell *matCellDef="let candidate">
+        {{ candidate.yearsOfExperience }}
+      </td>
     </ng-container>
 
     <!-- Availability Column -->
     <ng-container matColumnDef="availability">
       <th mat-header-cell *matHeaderCellDef>Available</th>
       <td mat-cell *matCellDef="let candidate">
-        <mat-icon [ngClass]="{'available': candidate.availability, 'unavailable': !candidate.availability}">
-          {{candidate.availability ? 'check_circle' : 'cancel'}}
+        <mat-icon
+          [ngClass]="{
+            available: candidate.availability,
+            unavailable: !candidate.availability,
+          }"
+        >
+          {{ candidate.availability ? "check_circle" : "cancel" }}
         </mat-icon>
       </td>
     </ng-container>
 
     <!-- Header and Row Definitions -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 
   <div class="no-data" *ngIf="candidates.length === 0 && !isLoading">

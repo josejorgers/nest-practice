@@ -5,6 +5,7 @@ import { AppModule } from './../src/app.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Candidate } from './../src/candidate/candidate.entity';
 import { Repository } from 'typeorm';
+import { App } from 'supertest/types';
 
 describe('CandidatesController (e2e)', () => {
   let app: INestApplication;
@@ -38,7 +39,7 @@ describe('CandidatesController (e2e)', () => {
 
   describe('/candidates (GET)', () => {
     it('should return an empty array when no candidates exist', () => {
-      return request(app.getHttpServer())
+      return request(app.getHttpServer() as App)
         .get('/candidates')
         .expect(200)
         .expect([]);
@@ -54,39 +55,41 @@ describe('CandidatesController (e2e)', () => {
       });
       await candidateRepository.save(candidate);
 
-      const response = await request(app.getHttpServer())
+      const response = await request(app.getHttpServer() as App)
         .get('/candidates')
         .expect(200);
 
       expect(Array.isArray(response.body)).toBe(true);
-      expect(response.body.length).toBe(1);
-      expect(response.body[0].name).toBe('John');
-      expect(response.body[0].surname).toBe('Doe');
+      expect((response.body as Candidate[]).length).toBe(1);
+      expect((response.body as Candidate[])[0].name).toBe('John');
+      expect((response.body as Candidate[])[0].surname).toBe('Doe');
     });
   });
 
   describe('/candidates/upload (POST)', () => {
     it('should upload and process a candidate with Excel file', async () => {
-      const mockFile = Buffer.from('Seniority,Years of experience,Availability\nsenior,5,true');
-      
-      const response = await request(app.getHttpServer())
+      const mockFile = Buffer.from(
+        'Seniority,Years of experience,Availability\nsenior,5,true',
+      );
+
+      const response = await request(app.getHttpServer() as App)
         .post('/candidates/upload')
         .field('name', 'John')
         .field('surname', 'Doe')
         .attach('file', mockFile, 'test.xlsx')
         .expect(201);
 
-      expect(response.body.name).toBe('John');
-      expect(response.body.surname).toBe('Doe');
-      expect(response.body.seniority).toBe('senior');
-      expect(response.body.yearsOfExperience).toBe(5);
-      expect(response.body.availability).toBe(true);
+      expect((response.body as Candidate).name).toBe('John');
+      expect((response.body as Candidate).surname).toBe('Doe');
+      expect((response.body as Candidate).seniority).toBe('senior');
+      expect((response.body as Candidate).yearsOfExperience).toBe(5);
+      expect((response.body as Candidate).availability).toBe(true);
     });
 
     it('should fail when required fields are missing', async () => {
       const mockFile = Buffer.from('test');
-      
-      await request(app.getHttpServer())
+
+      await request(app.getHttpServer() as App)
         .post('/candidates/upload')
         .attach('file', mockFile, 'test.xlsx')
         .expect(400);

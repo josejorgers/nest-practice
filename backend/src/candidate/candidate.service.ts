@@ -1,8 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Candidate } from './candidate.entity';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
+import { SeniorityLevel } from './candidate.entity';
+
+type ExcelData = {
+  seniority: SeniorityLevel;
+  'years of experience': number;
+  availability: boolean | string;
+};
 
 @Injectable()
 export class CandidateService {
@@ -22,7 +29,11 @@ export class CandidateService {
     });
   }
 
-  async processExcel(file: Express.Multer.File, name: string, surname: string): Promise<Candidate> {
+  async processExcel(
+    file: Express.Multer.File,
+    name: string,
+    surname: string,
+  ): Promise<Candidate> {
     const XLSX = await import('xlsx');
     const workbook = XLSX.read(file.buffer, { type: 'buffer' });
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -32,14 +43,15 @@ export class CandidateService {
       throw new Error('Excel file is empty');
     }
 
-    const excelData = data[0] as any;
-    
+    const excelData = data[0] as ExcelData;
+
     const createCandidateDto: CreateCandidateDto = {
       name,
       surname,
       seniority: excelData.seniority,
       yearsOfExperience: excelData['years of experience'],
-      availability: excelData.availability === 'TRUE' || excelData.availability === true,
+      availability:
+        excelData.availability === 'TRUE' || excelData.availability === true,
     };
 
     return this.create(createCandidateDto);

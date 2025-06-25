@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
-import { MatCardModule } from '@angular/material/card';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { CandidateService } from '../../services/candidate.service';
-import { Candidate } from '../../models/candidate.model';
+import { Component, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { MatTableModule } from "@angular/material/table";
+import { MatCardModule } from "@angular/material/card";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { CandidateService } from "../../services/candidate.service";
+import { Candidate } from "../../models/candidate.model";
 
 @Component({
-  selector: 'app-candidate-list',
+  selector: "app-candidate-list",
   standalone: true,
   imports: [
     CommonModule,
@@ -17,13 +17,19 @@ import { Candidate } from '../../models/candidate.model';
     MatCardModule,
     MatProgressSpinnerModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
   ],
-  templateUrl: './candidate-list.component.html',
-  styleUrls: ['./candidate-list.component.scss']
+  templateUrl: "./candidate-list.component.html",
+  styleUrls: ["./candidate-list.component.scss"],
 })
 export class CandidateListComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'surname', 'seniority', 'yearsOfExperience', 'availability'];
+  displayedColumns: string[] = [
+    "name",
+    "surname",
+    "seniority",
+    "yearsOfExperience",
+    "availability",
+  ];
   candidates: Candidate[] = [];
   isLoading = false;
   error: string | null = null;
@@ -37,17 +43,17 @@ export class CandidateListComponent implements OnInit {
   loadCandidates(): void {
     this.isLoading = true;
     this.error = null;
-    
+
     this.candidateService.getAllCandidates()?.subscribe({
       next: (candidates) => {
         this.candidates = candidates;
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error loading candidates:', error);
-        this.error = 'Failed to load candidates. Please try again later.';
+        console.error("Error loading candidates:", error);
+        this.error = "Failed to load candidates. Please try again later.";
         this.isLoading = false;
-      }
+      },
     });
   }
 }
