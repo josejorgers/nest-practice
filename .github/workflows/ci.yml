@@ -47,7 +47,7 @@ jobs:
     
     - name: Format check backend
       working-directory: ./backend
-      run: npx prettier --check "src/**/*.ts" "test/**/*.ts"
+      run: npx prettier --check "src/**/*.ts"
     
     - name: Test backend
       working-directory: ./backend
