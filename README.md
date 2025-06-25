@@ -62,9 +62,6 @@ This is a full-stack application for managing candidates with the ability to upl
 # Unit tests
 cd backend
 npm test
-
-# E2E tests
-npm run test:e2e
 ```
 
 ### Frontend Tests
